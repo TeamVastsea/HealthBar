@@ -74,7 +74,7 @@ public class EntityDamageListener implements Listener {
         if (progress < 0) {
             progress = 0;
             health = 0;
-        };
+        }
 
         String name = entity.getCustomName() == null ? entity.getType().name().toLowerCase() : entity.getCustomName();
 
