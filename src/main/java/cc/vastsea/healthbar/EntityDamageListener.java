@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +52,16 @@ public class EntityDamageListener implements Listener {
         Entity entity = event.getEntity();
 
         if (!bossBars.containsKey(entity.getUniqueId())) return;
-        BossBar bossBar = bossBars.get(entity.getUniqueId());
-        bossBar.removeAll();
-        bossBar.setVisible(false);
-        bossBars.remove(entity.getUniqueId());
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                BossBar bossBar = bossBars.get(entity.getUniqueId());
+                bossBar.removeAll();
+                bossBar.setVisible(false);
+                bossBars.remove(entity.getUniqueId());
+            }
+        }.runTaskLater(HealthBarPlugin.INSTANCE, 20L);
     }
 
 
