@@ -1,6 +1,7 @@
 package cc.vastsea.healthbar;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Nameable;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
@@ -32,7 +33,19 @@ public class EntityDamageListener implements Listener {
         double health = damageable.getHealth();
         double progress = health / maxHealth;
 
-        BossBar bossBar = bossBars.computeIfAbsent(damagee.getUniqueId(), uuid -> Bukkit.createBossBar(String.valueOf(damagee.getType()), BarColor.RED, BarStyle.SOLID));
+        String name = damagee.getCustomName() == null ? damagee.getType().name().toLowerCase() : damagee.getCustomName();
+        String title = String.format("[%s] %.2f/%.2f -%.2f", name, health, maxHealth, event.getDamage());
+        BossBar bossBar = bossBars.computeIfAbsent(damagee.getUniqueId(),
+                uuid -> Bukkit.createBossBar(title, BarColor.GREEN, BarStyle.SOLID));
+
+        if (progress > 0.6) {
+            bossBar.setColor(BarColor.GREEN);
+        } else if (progress > 0.3) {
+            bossBar.setColor(BarColor.YELLOW);
+        } else {
+            bossBar.setColor(BarColor.RED);
+        }
+        bossBar.setTitle(title);
         bossBar.setProgress(progress);
         bossBar.addPlayer(player);
         bossBar.setVisible(true);
