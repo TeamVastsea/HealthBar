@@ -1,14 +1,18 @@
 package cc.vastsea.healthbar;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HealthBarPlugin extends JavaPlugin {
 
+    public static JavaPlugin INSTANCE;
+
     @Override
     public void onEnable() {
-
-        getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EntityDamageListener(), this);
         getLogger().info("HealthBar plugin enabled!");
+        INSTANCE = this;
     }
 
     @Override
