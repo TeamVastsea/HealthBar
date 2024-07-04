@@ -1,0 +1,6 @@
+name: HealthBar
+main: cc.vastsea.healthbar.HealthBarPlugin
+version: 1.0
+description: A Spigot plugin to display the health of attacked entities using a boss bar
+author: Snowball_233
+api-version: 1.18
