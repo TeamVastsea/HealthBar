@@ -24,6 +24,8 @@ import java.util.UUID;
 
 public class EntityDamageListener implements Listener {
     private final Map<UUID, BossBar> bossBars = new HashMap<>();
+    private final Map<UUID, BukkitRunnable> bossBarTimers = new HashMap<>();
+    private final int coolDownTime = 3;
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -35,6 +37,7 @@ public class EntityDamageListener implements Listener {
                 uuid -> Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SOLID));
         bossBar.addPlayer(player);
         setBossBar(bossBar, damagee, event.getDamage());
+        resetBossBarTimer(damagee.getUniqueId(), bossBar);
     }
 
     @EventHandler
@@ -45,6 +48,7 @@ public class EntityDamageListener implements Listener {
         BossBar bossBarRecord = bossBars.get(entity.getUniqueId());
 
         setBossBar(bossBarRecord, entity, event.getDamage());
+        resetBossBarTimer(entity.getUniqueId(), bossBarRecord);
     }
 
     @EventHandler
@@ -52,18 +56,8 @@ public class EntityDamageListener implements Listener {
         Entity entity = event.getEntity();
 
         if (!bossBars.containsKey(entity.getUniqueId())) return;
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                BossBar bossBar = bossBars.get(entity.getUniqueId());
-                bossBar.removeAll();
-                bossBar.setVisible(false);
-                bossBars.remove(entity.getUniqueId());
-            }
-        }.runTaskLater(HealthBarPlugin.INSTANCE, 20L);
+        removeBossBar(entity.getUniqueId());
     }
-
 
     private void setBossBar(BossBar bossBar, Entity entity, double damage) {
         if (!(entity instanceof Damageable damageable) || !(entity instanceof Attributable attributable)) return;
@@ -99,5 +93,38 @@ public class EntityDamageListener implements Listener {
         bossBar.setTitle(title);
         bossBar.setProgress(progress);
         bossBar.setVisible(true);
+    }
+
+    private void resetBossBarTimer(UUID entityUUID, BossBar bossBar) {
+        if (bossBarTimers.containsKey(entityUUID)) {
+            bossBarTimers.get(entityUUID).cancel();
+        }
+
+        BukkitRunnable task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                bossBar.removeAll();
+                bossBar.setVisible(false);
+                bossBars.remove(entityUUID);
+                bossBarTimers.remove(entityUUID);
+            }
+        };
+        task.runTaskLater(HealthBarPlugin.INSTANCE, coolDownTime * 20L); // 60 ticks = 3 seconds
+        bossBarTimers.put(entityUUID, task);
+    }
+
+    private void removeBossBar(UUID entityUUID) {
+        if (!bossBars.containsKey(entityUUID)) return;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                BossBar bossBar = bossBars.get(entityUUID);
+                bossBar.removeAll();
+                bossBar.setVisible(false);
+                bossBars.remove(entityUUID);
+                bossBarTimers.remove(entityUUID);
+            }
+        }.runTaskLater(HealthBarPlugin.INSTANCE, 20L);
     }
 }
