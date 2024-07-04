@@ -6,7 +6,8 @@ public class HealthBarPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(new EntityDamageListener(this), this);
+
+        getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getLogger().info("HealthBar plugin enabled!");
     }
 

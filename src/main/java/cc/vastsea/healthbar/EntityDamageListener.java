@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class HealthBar extends JavaPlugin implements Listener {
+public class EntityDamageListener extends JavaPlugin implements Listener {
 
     private Map<UUID, BossBar> bossBars;
 
