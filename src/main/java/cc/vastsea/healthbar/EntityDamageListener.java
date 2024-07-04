@@ -77,20 +77,25 @@ public class EntityDamageListener implements Listener {
         };
 
         String name = entity.getCustomName() == null ? entity.getType().name().toLowerCase() : entity.getCustomName();
-        String color;
 
         if (progress > 0.6) {
             bossBar.setColor(BarColor.GREEN);
-            color = ChatColor.GREEN.toString();
         } else if (progress > 0.3) {
             bossBar.setColor(BarColor.YELLOW);
-            color = ChatColor.YELLOW.toString();
         } else {
             bossBar.setColor(BarColor.RED);
-            color = ChatColor.RED.toString();
         }
 
-        String title = String.format("%s[%s] %.2f/%.2f -%.2f%s", color, name, health, maxHealth, damage, color);
+        String title = String.format(
+                "%s %s%.2f%s/%s%.2f%s (%s-%.2f%s)",
+                name,
+                ChatColor.YELLOW, health,
+                ChatColor.WHITE,
+                ChatColor.YELLOW, maxHealth,
+                ChatColor.WHITE,
+                ChatColor.RED, damage,
+                ChatColor.WHITE
+        );
         bossBar.setTitle(title);
         bossBar.setProgress(progress);
         bossBar.setVisible(true);
