@@ -11,6 +11,8 @@
 
 The HealthBar Plugin displays the health of entities in Minecraft using a BossBar like CMI.
 
+![22391fc5-7f0d-44ab-bf65-39921a7b0a15](https://github.com/TeamVastsea/HealthBar/assets/97330394/8f2f4def-0b2a-4127-b0ab-4d4c0391ba59)
+
 ## Features
 
 - Displays health of damaged entities using a BossBar.
