@@ -11,6 +11,8 @@
 
 HealthBar 插件使用 BossBar 显示 Minecraft 实体的生命值，类似于 CMI。
 
+![22391fc5-7f0d-44ab-bf65-39921a7b0a15](https://github.com/TeamVastsea/HealthBar/assets/97330394/8f2f4def-0b2a-4127-b0ab-4d4c0391ba59)
+
 ## 特点
 
 - 使用 BossBar 显示受伤实体的生命值。
