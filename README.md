@@ -15,7 +15,6 @@ The HealthBar Plugin displays the health of entities in Minecraft using a BossBa
 
 - Displays health of damaged entities using a BossBar.
 - BossBar updates with the entity's current health and damage received.
-- Supports customization of hostile entities list.
 
 ## Installation
 

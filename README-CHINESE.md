@@ -15,7 +15,6 @@ HealthBar 插件使用 BossBar 显示 Minecraft 实体的生命值，类似于 C
 
 - 使用 BossBar 显示受伤实体的生命值。
 - BossBar 会随着实体当前生命值和受到的伤害更新。
-- 支持自定义敌对生物列表。
 
 ## 安装
 
