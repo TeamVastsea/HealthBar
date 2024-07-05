@@ -23,8 +23,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class EntityDamageListener implements Listener {
-    private final Map<UUID, BossBar> bossBars = new HashMap<>();
-    private final Map<UUID, BukkitRunnable> bossBarTimers = new HashMap<>();
+    private final Map<UUID, BossBarRecord> bossBars = new HashMap<>();
+    private final Map<UUID, Short> bossBarTimers = new HashMap<>();
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -32,11 +32,10 @@ public class EntityDamageListener implements Listener {
         Entity damager = event.getDamager();
         if (!(damager instanceof Player player)) return;
 
-        BossBar bossBar = bossBars.computeIfAbsent(damagee.getUniqueId(),
-                uuid -> Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SOLID));
-        bossBar.addPlayer(player);
-        setBossBar(bossBar, damagee, event.getDamage());
-        resetBossBarTimer(damagee.getUniqueId(), bossBar);
+        BossBarRecord bossBarRecord = bossBars.computeIfAbsent(damagee.getUniqueId(), uuid -> new BossBarRecord(uuid));
+        bossBarRecord.bossBar.addPlayer(player);
+        setBossBar(bossBarRecord.bossBar, damagee, event.getDamage());
+        resetBossBarTimer(damagee.getUniqueId());
     }
 
     @EventHandler
@@ -44,10 +43,10 @@ public class EntityDamageListener implements Listener {
         Entity entity = event.getEntity();
 
         if (!bossBars.containsKey(entity.getUniqueId())) return;
-        BossBar bossBarRecord = bossBars.get(entity.getUniqueId());
+        BossBarRecord bossBarRecord = bossBars.get(entity.getUniqueId());
 
-        setBossBar(bossBarRecord, entity, event.getDamage());
-        resetBossBarTimer(entity.getUniqueId(), bossBarRecord);
+        setBossBar(bossBarRecord.bossBar, entity, event.getDamage());
+        resetBossBarTimer(entity.getUniqueId());
     }
 
     @EventHandler
@@ -55,7 +54,7 @@ public class EntityDamageListener implements Listener {
         Entity entity = event.getEntity();
 
         if (!bossBars.containsKey(entity.getUniqueId())) return;
-        removeBossBar(entity.getUniqueId());
+        bossBarTimers.put(entity.getUniqueId(), (short) 1);
     }
 
     private void setBossBar(BossBar bossBar, Entity entity, double damage) {
@@ -94,37 +93,33 @@ public class EntityDamageListener implements Listener {
         bossBar.setVisible(true);
     }
 
-    private void resetBossBarTimer(UUID entityUUID, BossBar bossBar) {
-        if (bossBarTimers.containsKey(entityUUID)) {
-            bossBarTimers.get(entityUUID).cancel();
-        }
-
-        BukkitRunnable task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                bossBar.removeAll();
-                bossBar.setVisible(false);
-                bossBars.remove(entityUUID);
-                bossBarTimers.remove(entityUUID);
-            }
-        };
-        int coolDownTime = 3;
-        task.runTaskLater(HealthBarPlugin.INSTANCE, coolDownTime * 20L); // 60 ticks = 3 seconds
-        bossBarTimers.put(entityUUID, task);
+    private void resetBossBarTimer(UUID entityUUID) {
+        bossBarTimers.put(entityUUID, (short) 3);
     }
 
-    private void removeBossBar(UUID entityUUID) {
-        if (!bossBars.containsKey(entityUUID)) return;
+    class BossBarRecord {
+        BossBar bossBar;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                BossBar bossBar = bossBars.get(entityUUID);
-                bossBar.removeAll();
-                bossBar.setVisible(false);
-                bossBars.remove(entityUUID);
-                bossBarTimers.remove(entityUUID);
-            }
-        }.runTaskLater(HealthBarPlugin.INSTANCE, 20L);
+        BossBarRecord(UUID uuid) {
+            this.bossBar = Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SOLID);
+            bossBarTimers.put(uuid, (short) 3);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Short timer = bossBarTimers.get(uuid);
+                    if (timer != null && timer > 0) {
+                        bossBarTimers.put(uuid, (short) (timer - 1));
+                        return;
+                    }
+
+                    bossBar.removeAll();
+                    bossBar.setVisible(false);
+                    bossBars.remove(uuid);
+                    bossBarTimers.remove(uuid);
+                    this.cancel();
+                }
+            }.runTaskTimer(HealthBarPlugin.INSTANCE, 20L, 20L);
+        }
     }
 }
