@@ -25,7 +25,6 @@ import java.util.UUID;
 public class EntityDamageListener implements Listener {
     private final Map<UUID, BossBar> bossBars = new HashMap<>();
     private final Map<UUID, BukkitRunnable> bossBarTimers = new HashMap<>();
-    private final int coolDownTime = 3;
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -109,6 +108,7 @@ public class EntityDamageListener implements Listener {
                 bossBarTimers.remove(entityUUID);
             }
         };
+        int coolDownTime = 3;
         task.runTaskLater(HealthBarPlugin.INSTANCE, coolDownTime * 20L); // 60 ticks = 3 seconds
         bossBarTimers.put(entityUUID, task);
     }
