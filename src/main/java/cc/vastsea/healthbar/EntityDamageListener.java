@@ -32,7 +32,7 @@ public class EntityDamageListener implements Listener {
         Entity damager = event.getDamager();
         if (!(damager instanceof Player player)) return;
 
-        BossBarRecord bossBarRecord = bossBars.computeIfAbsent(damagee.getUniqueId(), uuid -> new BossBarRecord(uuid));
+        BossBarRecord bossBarRecord = bossBars.computeIfAbsent(damagee.getUniqueId(), BossBarRecord::new);
         bossBarRecord.bossBar.addPlayer(player);
         setBossBar(bossBarRecord.bossBar, damagee, event.getDamage());
         resetBossBarTimer(damagee.getUniqueId());
