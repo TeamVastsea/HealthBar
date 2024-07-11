@@ -40,9 +40,19 @@
                 <version>3.2.0</version>
                 <executions>
                     <execution>
+                        <id>default-jar</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>custom-jar-with-classifier</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>HealthBar</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

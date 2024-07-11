@@ -7,9 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,6 +30,8 @@ public class EntityDamageListener implements Listener {
         Entity damager = event.getDamager();
         if (!(damager instanceof Player player)) return;
 
+        if (isMonitoredEntity(damagee)) return;
+
         BossBarRecord bossBarRecord = bossBars.computeIfAbsent(damagee.getUniqueId(), BossBarRecord::new);
         bossBarRecord.bossBar.addPlayer(player);
         setBossBar(bossBarRecord.bossBar, damagee, event.getDamage());
@@ -43,8 +43,9 @@ public class EntityDamageListener implements Listener {
         Entity entity = event.getEntity();
 
         if (!bossBars.containsKey(entity.getUniqueId())) return;
-        BossBarRecord bossBarRecord = bossBars.get(entity.getUniqueId());
+        if (isMonitoredEntity(entity)) return;
 
+        BossBarRecord bossBarRecord = bossBars.get(entity.getUniqueId());
         setBossBar(bossBarRecord.bossBar, entity, event.getDamage());
         resetBossBarTimer(entity.getUniqueId());
     }
@@ -95,6 +96,10 @@ public class EntityDamageListener implements Listener {
 
     private void resetBossBarTimer(UUID entityUUID) {
         bossBarTimers.put(entityUUID, (short) 3);
+    }
+
+    private boolean isMonitoredEntity(Entity entity) {
+        return !(entity instanceof Player) && !(entity instanceof Monster) && !(entity instanceof Animals) && !(entity instanceof EnderDragon);
     }
 
     class BossBarRecord {
