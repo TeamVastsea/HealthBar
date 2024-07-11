@@ -101,7 +101,7 @@ public class EntityDamageListener implements Listener {
         BossBar bossBar;
 
         BossBarRecord(UUID uuid) {
-            this.bossBar = Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SOLID);
+            this.bossBar = Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SEGMENTED_10);
             bossBarTimers.put(uuid, (short) 3);
 
             new BukkitRunnable() {
