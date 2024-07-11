@@ -69,7 +69,7 @@ public class EntityDamageListener implements Listener {
             health = 0;
         }
 
-        String name = entity.getCustomName() == null ? entity.getType().name().toLowerCase() : entity.getCustomName();
+        String name = entity.getCustomName() == null ? formatEntityName(entity.getType().name()) : entity.getCustomName();
 
         if (progress > 0.6) {
             bossBar.setColor(BarColor.GREEN);
@@ -100,6 +100,16 @@ public class EntityDamageListener implements Listener {
 
     private boolean isMonitoredEntity(Entity entity) {
         return !(entity instanceof Player) && !(entity instanceof Monster) && !(entity instanceof Animals) && !(entity instanceof EnderDragon);
+    }
+
+    private String formatEntityName(String name) {
+        name = name.toLowerCase().replace("_", " ");
+        String[] words = name.split(" ");
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            formattedName.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
+        }
+        return formattedName.toString().trim();
     }
 
     class BossBarRecord {
